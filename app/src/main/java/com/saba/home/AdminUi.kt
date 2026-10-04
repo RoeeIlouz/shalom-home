@@ -23,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -287,6 +288,8 @@ fun AdminScreen(a: MainActivity) {
                 }
                 item { TextButton(onClick = { a.clearCrash() }) { Text(tr("Clear", "ניקוי")) } }
             }
+            item { Section(tr("About", "אודות")) }
+            item { About() }
             item { Spacer(Modifier.height(40.dp)) }
         }
     }
@@ -378,6 +381,47 @@ private fun ChoosePinScreen(title: String, onCancel: () -> Unit, onChosen: (Stri
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onCancel) { Text(tr("Cancel", "ביטול")) }
             Button(enabled = problem == null && second == first, onClick = { onChosen(first) }) { Text(tr("Save PIN", "שמירת קוד")) }
+        }
+    }
+}
+
+private const val SOURCE_URL = "https://github.com/RoeeIlouz/shalom-home"
+private const val STUDIO_URL = "https://rocisapps.com"
+
+@Composable
+private fun About() {
+    val ctx = LocalContext.current
+    val version = remember { runCatching { ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName }.getOrNull() ?: "" }
+    fun open(url: String) = runCatching {
+        ctx.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(20.dp))
+            .background(Color(0xFFF5F5F7))
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Image(
+            androidx.compose.ui.res.painterResource(R.drawable.rocisapps_lockup),
+            contentDescription = "ROCIs Apps",
+            modifier = Modifier.fillMaxWidth(0.75f).clickable { open(STUDIO_URL) },
+        )
+        Text("Shalom Home $version", fontSize = 17.sp, fontWeight = FontWeight.Bold)
+        Text(
+            tr("Made for my grandpa Shalom, for Hacktoberfest 2026 (DEV Weekend Challenge: Build for a Friend).",
+                "נבנה בשביל סבא שלום, במסגרת Hacktoberfest 2026 (אתגר DEV: Build for a Friend)."),
+            fontSize = 14.sp,
+        )
+        Text(
+            tr("Speech and understanding run on this phone with open models: Whisper (whisper.cpp) and Gemma 3 1B (llama.cpp).",
+                "הדיבור וההבנה רצים על הטלפון עם מודלים פתוחים: Whisper (whisper.cpp) ו-Gemma 3 1B (llama.cpp)."),
+            fontSize = 13.sp, color = Color.Gray,
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = { open(SOURCE_URL) }) { Text(tr("Source code", "קוד מקור")) }
+            OutlinedButton(onClick = { open(STUDIO_URL) }) { Text("rocisapps.com") }
         }
     }
 }
