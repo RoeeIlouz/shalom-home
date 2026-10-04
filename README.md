@@ -11,6 +11,8 @@ summary: Locked, voice-driven Android home screen for an elderly grandparent, wi
 
 A home screen for my grandfather Shalom's Android phone.
 
+**[Download the APK and the demo video (v1.0)](https://github.com/RoeeIlouz/shalom-home/releases/tag/v1.0)**
+
 He kept calling me because a shortcut had moved to another page, or because the button that calls my mom had disappeared. Shalom Home replaces his launcher with one page of big tiles he cannot drag, delete or swipe away, plus a "דבר איתי" ("talk to me") button: he says what he wants in Hebrew or French, and the phone does it.
 
 All speech recognition and understanding runs on the phone with open-weight models. His voice and his contacts never leave the device, and nothing needs an internet connection after setup.
