@@ -1,0 +1,9 @@
+<resources>
+    <!-- The home screen sits on top of the phone's own wallpaper, like any launcher. -->
+    <style name="Theme.ShalomHome" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowShowWallpaper">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+</resources>

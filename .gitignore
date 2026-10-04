@@ -1,0 +1,13 @@
+.gradle/
+build/
+.cxx/
+local.properties
+.idea/
+*.iml
+models/
+.kotlin/
+build-so/
+dist/
+*.log
+testaudio/*.mp3
+docs/devto-post.md
