@@ -117,15 +117,24 @@ private fun HomeScreen(a: MainActivity, onWallpaper: Boolean) {
 
 @Composable
 private fun TileGrid(a: MainActivity, modifier: Modifier) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        itemsIndexed(a.settings.tiles, key = { _, t -> t.id }) { _, tile ->
-            TileButton(tile, a.apps.firstOrNull { it.packageName == tile.target }) {
-                a.open(Target.OfTile(tile))
+    // Tiles shrink to fit the screen (square while there is room) so nothing hides below the fold;
+    // only beyond ~5 rows does the grid scroll.
+    BoxWithConstraints(modifier) {
+        val gap = 14.dp
+        val rows = (a.settings.tiles.size + 1) / 2
+        val square = (maxWidth - gap) / 2
+        val fit = if (rows > 0) (maxHeight - gap * (rows - 1)) / rows else square
+        val tileHeight = minOf(square, maxOf(fit, 110.dp))
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+            verticalArrangement = Arrangement.spacedBy(gap),
+        ) {
+            itemsIndexed(a.settings.tiles, key = { _, t -> t.id }) { _, tile ->
+                TileButton(tile, a.apps.firstOrNull { it.packageName == tile.target }, Modifier.height(tileHeight)) {
+                    a.open(Target.OfTile(tile))
+                }
             }
         }
     }
@@ -219,10 +228,10 @@ private fun Clock(onWallpaper: Boolean, onSecretTaps: () -> Unit) {
 }
 
 @Composable
-private fun TileButton(tile: Tile, app: AppInfo?, onClick: () -> Unit) {
+private fun TileButton(tile: Tile, app: AppInfo?, modifier: Modifier, onClick: () -> Unit) {
     Column(
-        Modifier
-            .aspectRatio(1f)
+        modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(28.dp))
             .background(Color(tile.color))
             .clickable(onClick = onClick)
@@ -230,7 +239,7 @@ private fun TileButton(tile: Tile, app: AppInfo?, onClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val iconMod = Modifier.size(84.dp)
+        val iconMod = Modifier.weight(1f, fill = false).sizeIn(maxWidth = 84.dp, maxHeight = 84.dp).aspectRatio(1f)
         when {
             tile.kind == TileKind.CALL -> Icon(Icons.Filled.Phone, null, iconMod, tint = Color.White)
             tile.kind == TileKind.ALL_APPS -> Icon(Icons.Filled.Apps, null, iconMod, tint = Color.White)
@@ -415,6 +424,8 @@ private fun PinScreen(a: MainActivity) {
         }
         Spacer(Modifier.height(16.dp))
         val keys = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "✕", "0", "⌫")
+        // A keypad keeps the dialer layout (1-2-3 left to right) even when the screen is Hebrew.
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) { Column(horizontalAlignment = Alignment.CenterHorizontally) {
         keys.chunked(3).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(6.dp)) {
                 row.forEach { k ->
@@ -431,5 +442,6 @@ private fun PinScreen(a: MainActivity) {
                 }
             }
         }
+        } }
     }
 }

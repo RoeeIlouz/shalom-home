@@ -41,6 +41,19 @@ object DebugHooks {
             sm.requestPinShortcut(info, null)
         }
 
+        // Static screens for the promo video, e.g. --es demo_state confirm. Nothing is recorded, dialed or opened.
+        intent.getStringExtra("demo_state")?.let { st ->
+            intent.removeExtra("demo_state")
+            val contact = a.settings.contacts.firstOrNull()
+            a.debugShowVoice(when (st) {
+                "listening" -> VoiceState.Listening(0.7f)
+                "thinking" -> VoiceState.Thinking
+                "confirm" -> contact?.let { VoiceState.Confirm(Target.OfContact(it), 3) } ?: VoiceState.Idle
+                "notunderstood" -> VoiceState.NotUnderstood("מה השעה עכשיו")
+                else -> VoiceState.Idle
+            })
+        }
+
         intent.getStringExtra("test_wav")?.let { path ->
             intent.removeExtra("test_wav")
             runCatching { readWav(File(path)) }

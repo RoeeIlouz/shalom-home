@@ -319,6 +319,12 @@ class MainActivity : ComponentActivity() {
         } else startListening()
     }
 
+    /** Debug builds only (see [DebugHooks]): display a voice state for screenshots. Never starts a countdown or acts. */
+    fun debugShowVoice(state: VoiceState) {
+        voiceJob?.cancel()
+        voice = state
+    }
+
     fun cancelVoice() {
         voiceJob?.cancel()
         voiceJob = null

@@ -11,3 +11,4 @@ dist/
 *.log
 testaudio/*.mp3
 docs/devto-post.md
+tools/promo-video/out/
